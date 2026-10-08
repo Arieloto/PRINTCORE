@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #0f172a;
+    background-color: #f8fafc;
+  }
+}
+
+/* Tabular figures for money, quantities, telemetry */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Confirm dialog animations ─────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Frameless desktop window (Electron) ─────────────────────────────────────
+   The bar itself is the drag region; every interactive descendant opts out so
+   clicks reach the buttons. Only applied when the title bar is rendered. */
+.titlebar {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.titlebar button,
+.titlebar a,
+.titlebar input,
+.titlebar select,
+.titlebar textarea,
+.titlebar [role='button'],
+.titlebar .titlebar-controls {
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  display: grid;
+  width: 46px;
+  place-items: center;
+  color: #94a3b8;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.titlebar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.titlebar-btn-close:hover {
+  background-color: #e81123;
+  color: #ffffff;
+}
+
+/* The sticky navbar must park below the fixed title bar, not behind it. */
+.desktop-shell .app-navbar {
+  top: 36px;
+}
+
+@media print {
+  .titlebar {
+    display: none !important;
+  }
+}
+
+/* Custom print media styles for A4 documents */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm 12mm 10mm;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Con un documento A4 abierto, imprime SOLO el documento:
+     1) oculta cualquier cosa fuera de #root (portales/toasts ajenos),
+     2) oculta los hermanos directos del documento dentro de la app,
+     3) neutraliza el overlay oscuro y el scroll del modal. */
+  body.a4-print-open > *:not(#root) {
+    display: none !important;
+  }
+
+  body.a4-print-open #root > div > *:not(.a4-print-root) {
+    display: none !important;
+  }
+
+  body.a4-print-open .a4-print-root {
+    position: static !important;
+    display: block !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .a4-page {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+}

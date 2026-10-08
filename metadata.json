@@ -1,0 +1,6 @@
+{
+  "name": "PrintCore 3D Chile - Sistema Integral de Costeo y Gestión de Impresión 3D",
+  "description": "Sistema profesional de gestión, costeo avanzado, cotizaciones, órdenes de trabajo, inventario y rentabilidad para talleres de impresión 3D en Chile.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
