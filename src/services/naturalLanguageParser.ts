@@ -1,4 +1,5 @@
-import { MaterialType, FinishingType, PaintingLevel, UrgencyLevel } from '../types';
+import { BusinessSettings, MaterialType, FinishingType, PaintingLevel, UrgencyLevel } from '../types';
+import { formatMoney } from './currency';
 
 export interface Parsed3DIntent {
   materialType?: MaterialType;
@@ -18,7 +19,7 @@ export interface Parsed3DIntent {
   rawMatchedTokens: string[];
 }
 
-export function parseNatural3DText(text: string): Parsed3DIntent {
+export function parseNatural3DText(text: string, settings?: BusinessSettings): Parsed3DIntent {
   const result: Parsed3DIntent = {
     rawMatchedTokens: []
   };
@@ -78,7 +79,7 @@ export function parseNatural3DText(text: string): Parsed3DIntent {
       total += 500;
     }
     result.spoolPriceCLP = total;
-    result.rawMatchedTokens.push(`Precio Bobina: $${total.toLocaleString('es-CL')} CLP`);
+    result.rawMatchedTokens.push(`Precio Bobina: ${formatMoney(total, settings)}`);
   } else {
     const priceDirectMatch = lower.match(/(?:bobina|filamento).*?\$?\s*([1-9]\d{1,2}(?:\.\d{3})|\d{4,6})\b/i) ||
                              lower.match(/cost[oó]\s*\$?([1-9]\d{1,2}(?:\.\d{3})|\d{4,6})\b/i);
@@ -86,7 +87,7 @@ export function parseNatural3DText(text: string): Parsed3DIntent {
       const cleanNum = parseInt(priceDirectMatch[1].replace(/\./g, ''), 10);
       if (cleanNum >= 5000 && cleanNum <= 200000) {
         result.spoolPriceCLP = cleanNum;
-        result.rawMatchedTokens.push(`Precio Bobina: $${cleanNum.toLocaleString('es-CL')} CLP`);
+        result.rawMatchedTokens.push(`Precio Bobina: ${formatMoney(cleanNum, settings)}`);
       }
     }
   }
@@ -197,7 +198,7 @@ export function parseNatural3DText(text: string): Parsed3DIntent {
 export function parseNaturalAmount(text: string): number | null {
   const clean = text.trim().toLowerCase();
   
-  // Chilean slang / expressions
+  // Local slang / expressions understood by the parser
   const milMatch = clean.match(/^(\d+(?:[.,]\d+)?)\s*mil$/);
   if (milMatch) {
     return Math.round(parseFloat(milMatch[1].replace(',', '.')) * 1000);

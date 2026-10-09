@@ -25,6 +25,7 @@ import { BusinessSettingsView } from './components/settings/BusinessSettingsView
 import { DocumentA4Modal, DocumentType } from './components/documents/DocumentA4Modal';
 import { PaymentModal } from './components/payments/PaymentModal';
 import { buildWorkOrderInstructions } from './services/workOrderInstructions';
+import { currencyLocaleOf, formatMoney } from './services/currency';
 
 export default function App() {
   // Global State
@@ -249,7 +250,7 @@ export default function App() {
     const nextSettings = { ...settings, receiptCounter: nextReceiptCounter };
     setSettings(nextSettings);
     AppStorage.saveSettings(nextSettings);
-    showNotification(`Pago de $${payment.amountCLP.toLocaleString('es-CL')} CLP registrado exitosamente`);
+    showNotification(`Pago de ${formatMoney(payment.amountCLP, settings)} registrado exitosamente`);
   };
 
   const openDocumentModal = (quote: Quote, type: DocumentType) => {
@@ -271,7 +272,7 @@ export default function App() {
       {/* Custom title bar (frameless desktop window only) */}
       {desktop.active && (
         <TitleBar
-          title="PrintCore 3D Chile"
+          title="PrintCore 3D"
           subtitle="Sistema de costeo y gestión para talleres de impresión 3D"
           onWindow={handleWindowAction}
         />
@@ -285,6 +286,7 @@ export default function App() {
         pendingQuotesCount={pendingQuotesCount}
         activeOrdersCount={activeOrdersCount}
         storageMode={storageMode}
+        locale={currencyLocaleOf(settings)}
       />
 
       {/* Persistent warning while data cannot reach the server */}
@@ -326,6 +328,7 @@ export default function App() {
         {activeTab === 'quotes' && (
           <QuoteList
             quotes={quotes}
+            settings={settings}
             onOpenDocument={(q, type) => openDocumentModal(q, type)}
             onCopyRequirementsToWizard={handleCopyRequirementsToWizard}
             onGenerateWorkOrder={handleGenerateWorkOrder}
@@ -374,6 +377,7 @@ export default function App() {
         {activeTab === 'inventory' && (
           <InventoryManager
             materials={materials}
+            settings={settings}
             onSaveMaterials={handleSaveMaterials}
           />
         )}
@@ -382,6 +386,7 @@ export default function App() {
         {activeTab === 'printers' && (
           <PrinterManager
             printers={printers}
+            settings={settings}
             onSavePrinters={handleSavePrinters}
           />
         )}
@@ -390,6 +395,7 @@ export default function App() {
         {activeTab === 'customers' && (
           <CustomerManager
             customers={customers}
+            settings={settings}
             onSaveCustomers={handleSaveCustomers}
           />
         )}
@@ -430,9 +436,9 @@ export default function App() {
 
       {/* Discreet Footer */}
       <footer className="no-print border-t border-slate-200 bg-white py-4 px-6 text-center text-xs text-slate-400">
-        PrintCore 3D Chile · Sistema Integral de Gestión y Costeo de Impresión 3D
+        PrintCore 3D · Sistema Integral de Gestión y Costeo de Impresión 3D
         <span className="block mt-1 text-slate-400/80">
-          Fecha y hora actuales: <LiveClock className="font-medium text-slate-500" />
+          Fecha y hora actuales: <LiveClock className="font-medium text-slate-500" locale={currencyLocaleOf(settings)} />
         </span>
       </footer>
 

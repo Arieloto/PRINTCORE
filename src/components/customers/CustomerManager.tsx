@@ -7,16 +7,19 @@ import {
   Trash2, 
   X
 } from 'lucide-react';
-import { Customer } from '../../types';
+import { BusinessSettings, Customer } from '../../types';
+import { formatMoney } from '../../services/currency';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 interface CustomerManagerProps {
+  settings: BusinessSettings;
   customers: Customer[];
   onSaveCustomers: (customers: Customer[]) => void;
 }
 
 export const CustomerManager: React.FC<CustomerManagerProps> = ({
   customers,
+  settings,
   onSaveCustomers
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -271,7 +274,7 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({
                     </td>
 
                     <td className="py-3 px-4 text-right font-mono font-bold text-slate-900 tabular-nums">
-                      ${c.totalSpentCLP.toLocaleString('es-CL')}
+                      {formatMoney(c.totalSpentCLP, settings)}
                     </td>
 
                     <td className="py-3 px-4 text-right">

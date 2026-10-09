@@ -6,6 +6,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { BusinessSettings } from '../../types';
+import { currencyCodeOf, formatMoney, formatRate } from '../../services/currency';
 
 interface PrinterSimulatorProps {
   settings: BusinessSettings;
@@ -163,7 +164,7 @@ export const PrinterSimulator: React.FC<PrinterSimulatorProps> = ({
             >
               <div className="font-semibold text-xs text-slate-900 truncate">{p.name}</div>
               <div className="text-[11px] text-slate-500 mt-1 font-mono font-medium">
-                ${(p.priceCLP + p.accessoriesCLP).toLocaleString('es-CL')} CLP
+                {formatMoney((p.priceCLP + p.accessoriesCLP), settings)}
               </div>
               <div className="text-[10px] text-slate-400 mt-0.5">{p.watts}W consumo</div>
             </button>
@@ -182,7 +183,7 @@ export const PrinterSimulator: React.FC<PrinterSimulatorProps> = ({
 
           <div>
             <label className="block text-xs font-medium text-slate-700 mb-1">
-              Precio de Compra Impresora ($ CLP)
+              Precio de Compra Impresora ({currencyCodeOf(settings)})
             </label>
             <input
               type="number"
@@ -195,7 +196,7 @@ export const PrinterSimulator: React.FC<PrinterSimulatorProps> = ({
 
           <div>
             <label className="block text-xs font-medium text-slate-700 mb-1">
-              Accesorios Iniciales & Placas ($ CLP)
+              Accesorios Iniciales & Placas ({currencyCodeOf(settings)})
             </label>
             <input
               type="number"
@@ -273,7 +274,7 @@ export const PrinterSimulator: React.FC<PrinterSimulatorProps> = ({
               Resultado Financiero & Costo Máquina / Hora
             </h2>
             <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              Inversión Total: ${totalInvestmentCLP.toLocaleString('es-CL')} CLP
+              Inversión Total: {formatMoney(totalInvestmentCLP, settings)}
             </span>
           </div>
 
@@ -281,28 +282,28 @@ export const PrinterSimulator: React.FC<PrinterSimulatorProps> = ({
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
             <div className="flex justify-between text-slate-600">
               <span>Cuota mensual de amortización ({recoveryTargetMonths} meses):</span>
-              <span className="font-mono font-semibold text-slate-900">${Math.round(monthlyAmortizationCLP).toLocaleString('es-CL')} / mes</span>
+              <span className="font-mono font-semibold text-slate-900">{formatMoney(Math.round(monthlyAmortizationCLP), settings)} / mes</span>
             </div>
 
             <div className="flex justify-between text-slate-600">
               <span>Recuperación por hora de impresión:</span>
-              <span className="font-mono text-slate-800">${Math.round(machineHourlyAmortizationCLP)} / hr</span>
+              <span className="font-mono text-slate-800">{formatRate(Math.round(machineHourlyAmortizationCLP), settings)} / hr</span>
             </div>
 
             <div className="flex justify-between text-slate-600">
               <span>Electricidad estimada ({customWatts}W a ${kwhRate}/kWh):</span>
-              <span className="font-mono text-slate-800">${Math.round(electricityPerHourCLP)} / hr</span>
+              <span className="font-mono text-slate-800">{formatRate(Math.round(electricityPerHourCLP), settings)} / hr</span>
             </div>
 
             <div className="flex justify-between text-slate-600">
               <span>Mantenimiento preventivo & reserva de fallos:</span>
-              <span className="font-mono text-slate-800">${Math.round(maintenancePerHourCLP + repairPerHourCLP)} / hr</span>
+              <span className="font-mono text-slate-800">{formatRate(Math.round(maintenancePerHourCLP + repairPerHourCLP), settings)} / hr</span>
             </div>
 
             <div className="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-950 text-sm">
               <span>Costo Total Máquina por Hora:</span>
               <span className="font-mono text-base text-slate-900 tabular-nums">
-                ${totalMachineCostPerHourCLP.toLocaleString('es-CL')} CLP / hr
+                {formatMoney(totalMachineCostPerHourCLP, settings)} / hr
               </span>
             </div>
           </div>

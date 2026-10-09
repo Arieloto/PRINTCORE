@@ -11,9 +11,17 @@ export interface BusinessSettings {
   phone: string;
   email: string;
   website: string;
-  
+
+  // Currency & locale. Every amount is stored in this currency, so the same
+  // data set works in any country.
+  currencyCode: string;   // ISO 4217, e.g. 'CLP', 'USD', 'EUR', 'MXN'
+  currencyLocale: string; // BCP-47 locale used to format amounts and dates
+  taxLabel?: string;      // sales tax name, e.g. 'IVA', 'VAT', 'Sales Tax'
+  taxIdLabel?: string;    // business tax id label, e.g. 'RUT', 'RFC', 'NIT'
+  regionLabel?: string;   // sub-national division label, e.g. 'Comuna', 'Estado'
+
   // Economic & Labor Settings
-  monthlyTargetSalaryCLP: number; // e.g. 1.000.000 CLP
+  monthlyTargetSalaryCLP: number; // e.g. 1.000.000 in the workshop currency
   monthlyAvailableHours: number;  // e.g. 180 hrs
   monthlyProductiveHours: number; // e.g. 140 hrs
   monthlyBillableHours: number;   // e.g. 120 hrs -> hora_hombre = target / billable
@@ -21,7 +29,7 @@ export interface BusinessSettings {
   // Profit & Tax Settings
   profitMode: ProfitCalculationMode; // 'markup' (cost * 1.3) or 'margin' (cost / (1 - 0.3))
   defaultProfitPercent: number;      // e.g. 30%
-  ivaRate: number;                   // e.g. 0.19 (19% Chile)
+  ivaRate: number;                   // sales tax rate as a fraction, e.g. 0.19
   
   // Overhead & Cost Factors
   kwhPriceCLP: number;               // e.g. 210 CLP/kWh

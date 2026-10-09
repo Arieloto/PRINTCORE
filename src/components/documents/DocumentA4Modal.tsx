@@ -8,6 +8,7 @@ import {
   Calculator
 } from 'lucide-react';
 import { Quote, BusinessSettings, WorkOrder, PaymentRecord } from '../../types';
+import { formatDate, formatDateTime, formatMoney, taxIdLabelOf, taxLabelOf } from '../../services/currency';
 import { buildWorkOrderInstructions } from '../../services/workOrderInstructions';
 
 export type DocumentType = 
@@ -49,7 +50,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
       efectivo: 'Efectivo en Taller',
       debito: 'Tarjeta Débito',
       credito: 'Tarjeta Crédito',
-      webpay: 'Webpay / Online',
+      webpay: 'Tarjeta / Online',
       otro: 'Otro'
     };
     return labels[method] || String(method);
@@ -182,7 +183,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                         </h1>
                       </div>
                       <p className="text-slate-600 mt-1">{settings.giro}</p>
-                      <p className="text-slate-500 text-[11px]">RUT: {settings.rut} · {settings.commune}, {settings.city}</p>
+                      <p className="text-slate-500 text-[11px]">{taxIdLabelOf(settings)}: {settings.rut} · {settings.commune}, {settings.city}</p>
                       <p className="text-slate-500 text-[11px]">{settings.email} · {settings.phone}</p>
                     </div>
 
@@ -194,10 +195,10 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                         {quote.quoteNumber}
                       </div>
                       <div className="text-[11px] text-slate-500 mt-0.5">
-                        Emisión: {new Date(quote.createdAt).toLocaleDateString('es-CL')}
+                        Emisión: {formatDate(quote.createdAt, settings)}
                       </div>
                       <div className="text-[11px] text-slate-500">
-                        Válida hasta: {new Date(quote.validUntil).toLocaleDateString('es-CL')}
+                        Válida hasta: {formatDate(quote.validUntil, settings)}
                       </div>
                     </div>
                   </div>
@@ -211,7 +212,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                       <div className="font-semibold text-slate-900 text-sm mt-0.5">
                         {quote.customerName}
                       </div>
-                      <div className="text-slate-600 mt-0.5">RUT: {quote.customerRut}</div>
+                      <div className="text-slate-600 mt-0.5">{taxIdLabelOf(settings)}: {quote.customerRut}</div>
                       <div className="text-slate-500">{quote.customerEmail}</div>
                     </div>
 
@@ -261,10 +262,10 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                             {item.quantity}
                           </td>
                           <td className="py-2.5 text-right font-mono tabular-nums text-slate-700">
-                            ${item.unitPriceNetCLP.toLocaleString('es-CL')}
+                            {formatMoney(item.unitPriceNetCLP, settings)}
                           </td>
                           <td className="py-2.5 text-right font-mono font-semibold tabular-nums text-slate-900">
-                            ${item.totalNetCLP.toLocaleString('es-CL')}
+                            {formatMoney(item.totalNetCLP, settings)}
                           </td>
                         </tr>
                       ))}
@@ -279,13 +280,13 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                     {/* Bank Details for Transfer */}
                     <div className="w-1/2 p-3 bg-slate-50 rounded border border-slate-200 text-[11px] space-y-1">
                       <div className="font-bold text-slate-800">
-                        Datos para Transferencia Bancaria (Chile)
+                        Datos para Transferencia Bancaria
                       </div>
                       <div className="text-slate-600">Banco: {settings.bankName || '—'}</div>
                       <div className="text-slate-600">Tipo de cuenta: {settings.bankAccountType || '—'}</div>
                       <div className="text-slate-600">N° Cuenta: {settings.bankAccountNumber || '—'}</div>
                       <div className="text-slate-600">Titular: {settings.bankHolderName || settings.workshopName}</div>
-                      <div className="text-slate-600">RUT: {settings.bankHolderRut || settings.rut}</div>
+                      <div className="text-slate-600">{taxIdLabelOf(settings)}: {settings.bankHolderRut || settings.rut}</div>
                       <div className="text-slate-600">Email: {settings.bankHolderEmail || settings.email}</div>
                     </div>
 
@@ -294,7 +295,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                       <div className="flex justify-between text-slate-600">
                         <span>Subtotal Neto:</span>
                         <span className="font-mono font-medium tabular-nums">
-                          ${quote.subtotalNetCLP.toLocaleString('es-CL')} CLP
+                          {formatMoney(quote.subtotalNetCLP, settings)}
                         </span>
                       </div>
 
@@ -302,29 +303,28 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                         <div className="flex justify-between text-emerald-700">
                           <span>Descuento Comercial:</span>
                           <span className="font-mono tabular-nums">
-                            -${quote.discountCLP.toLocaleString('es-CL')} CLP
+                            -{formatMoney(quote.discountCLP, settings)}
                           </span>
                         </div>
                       )}
 
                       <div className="flex justify-between text-slate-600">
-                        <span>IVA (19%):</span>
+                        <span>{taxLabelOf(settings)} ({(settings.ivaRate * 100).toFixed(0)}%):</span>
                         <span className="font-mono font-medium tabular-nums">
-                          ${quote.ivaCLP.toLocaleString('es-CL')} CLP
+                          {formatMoney(quote.ivaCLP, settings)}
                         </span>
                       </div>
 
                       <div className="flex items-baseline justify-between gap-3 text-sm font-bold text-slate-950 pt-2 border-t border-slate-300">
                         <span>TOTAL:</span>
                         <span className="font-mono text-base text-slate-900 tabular-nums">
-                          ${quote.totalCLP.toLocaleString('es-CL')}{' '}
-                          <span className="text-[10px] font-sans text-slate-400">CLP</span>
+                          {formatMoney(quote.totalCLP, settings)}
                         </span>
                       </div>
 
                       <div className="pt-2 text-[11px] text-slate-500">
-                        <div>Anticipo 50%: ${quote.downPaymentCLP.toLocaleString('es-CL')} CLP</div>
-                        <div>Saldo contra aviso: ${quote.balanceCLP.toLocaleString('es-CL')} CLP</div>
+                        <div>Anticipo 50%: {formatMoney(quote.downPaymentCLP, settings)}</div>
+                        <div>Saldo contra aviso: {formatMoney(quote.balanceCLP, settings)}</div>
                       </div>
                     </div>
                   </div>
@@ -361,7 +361,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
 
                     <div className="text-right">
                       <div className="text-xs font-mono font-bold text-slate-800">
-                        Fecha: {new Date().toLocaleDateString('es-CL')}
+                        Fecha: {formatDate(new Date(), settings)}
                       </div>
                       <div className="text-[11px] text-slate-500">
                         Técnico: {workOrder?.responsibleTechnician || 'Operador de Turno'}
@@ -504,7 +504,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                       )}
                       <div>
                         <div className="font-bold text-sm text-slate-900">{settings.workshopName}</div>
-                        <div className="text-[11px] text-slate-500">RUT: {settings.rut}</div>
+                        <div className="text-[11px] text-slate-500">{taxIdLabelOf(settings)}: {settings.rut}</div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -517,13 +517,13 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                     <div>
                       <span className="text-slate-500">Recibimos de:</span>
                       <div className="font-bold text-slate-900 text-sm">{quote.customerName}</div>
-                      <div className="text-slate-600">RUT: {quote.customerRut}</div>
+                      <div className="text-slate-600">{taxIdLabelOf(settings)}: {quote.customerRut}</div>
                     </div>
 
                     <div className="p-3 bg-emerald-50 rounded border border-emerald-200">
                       <span className="text-emerald-800 text-[11px] font-semibold block">La suma de:</span>
                       <div className="text-lg font-bold font-mono text-emerald-900">
-                        ${(paymentRecord?.amountCLP || quote.downPaymentCLP).toLocaleString('es-CL')} CLP
+                        {formatMoney((paymentRecord?.amountCLP || quote.downPaymentCLP), settings)}
                       </div>
                       <div className="text-[11px] text-emerald-700 mt-0.5">
                         Por concepto de: Anticipo 50% fabricación proyecto {quote.projectName}
@@ -531,10 +531,10 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-slate-600">
-                      <div><span className="font-semibold">Fecha:</span> {new Date().toLocaleDateString('es-CL')}</div>
-                      <div><span className="font-semibold">Método:</span> {paymentRecord?.method ? methodLabel(paymentRecord.method) : (settings.paymentMethodLabel || 'Transferencia Electrónica')}</div>
+                      <div><span className="font-semibold">Fecha:</span> {formatDate(new Date(), settings)}</div>
+                      <div><span className="font-semibold">Método:</span> {paymentRecord?.method ? methodLabel(paymentRecord.method) : (settings.paymentMethodLabel || 'Transferencia bancaria')}</div>
                       <div><span className="font-semibold">Referencia:</span> {paymentRecord?.referenceNumber || '—'}</div>
-                      <div><span className="font-semibold">Saldo restante:</span> ${quote.balanceCLP.toLocaleString('es-CL')} CLP</div>
+                      <div><span className="font-semibold">Saldo restante:</span> {formatMoney(quote.balanceCLP, settings)}</div>
                     </div>
                   </div>
 
@@ -567,10 +567,10 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                     <div className="text-right font-mono text-xs">
                       <div className="text-slate-500">Costo Real Interno:</div>
                       <div className="text-base font-bold text-slate-900">
-                        ${quote.costBreakdown.totalInternalCostCLP.toLocaleString('es-CL')}
+                        {formatMoney(quote.costBreakdown.totalInternalCostCLP, settings)}
                       </div>
                       <div className="text-emerald-700 font-semibold">
-                        Utilidad: +${quote.costBreakdown.totalNetProfitCLP.toLocaleString('es-CL')} ({quote.costBreakdown.appliedProfitPercent}%)
+                        Utilidad: +{formatMoney(quote.costBreakdown.totalNetProfitCLP, settings)} ({quote.costBreakdown.appliedProfitPercent}%)
                       </div>
                     </div>
                   </div>
@@ -597,7 +597,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
                           </div>
                           <div className="text-right shrink-0 font-mono">
                             <div className="font-bold text-slate-900">
-                              ${item.totalCostCLP.toLocaleString('es-CL')}
+                              {formatMoney(item.totalCostCLP, settings)}
                             </div>
                             <div className="text-[10px] text-slate-400">{item.quantityUnits}</div>
                           </div>
@@ -609,7 +609,7 @@ export const DocumentA4Modal: React.FC<DocumentA4ModalProps> = ({
 
                 <div className="pt-4 border-t border-slate-200 text-[11px] text-slate-500 flex justify-between">
                   <span>Generado por PrintCore 3D Engine · Registro para control de rentabilidad</span>
-                  <span className="font-mono">Fecha: {new Date().toLocaleString('es-CL')}</span>
+                  <span className="font-mono">Fecha: {formatDateTime(new Date(), settings)}</span>
                 </div>
               </div>
             )}
