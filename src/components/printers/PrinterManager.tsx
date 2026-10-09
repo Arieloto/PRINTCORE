@@ -12,20 +12,17 @@ import {
   Zap,
   CheckCircle2
 } from 'lucide-react';
-import { BusinessSettings, Printer } from '../../types';
-import { formatMoney } from '../../services/currency';
+import { Printer } from '../../types';
 import { REFERENCE_PRINTER_PRESETS, ReferencePrinterPreset } from '../../data/printerPresets';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 interface PrinterManagerProps {
-  settings: BusinessSettings;
   printers: Printer[];
   onSavePrinters: (printers: Printer[]) => void;
 }
 
 export const PrinterManager: React.FC<PrinterManagerProps> = ({
   printers,
-  settings,
   onSavePrinters
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -334,10 +331,10 @@ export const PrinterManager: React.FC<PrinterManagerProps> = ({
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold block">Inversión Total</span>
                       <div className="font-mono font-bold text-slate-900 mt-0.5">
-                        {formatMoney(p.totalInvestmentCLP, settings)}
+                        ${p.totalInvestmentCLP.toLocaleString('es-CL')}
                       </div>
                       <div className="text-[10px] text-slate-400">
-                        {formatMoney(p.purchasePriceCLP, settings)} + {formatMoney(p.accessoriesCLP, settings)} acc.
+                        ${p.purchasePriceCLP.toLocaleString('es-CL')} + ${p.accessoriesCLP.toLocaleString('es-CL')} acc.
                       </div>
                     </div>
 
@@ -379,8 +376,8 @@ export const PrinterManager: React.FC<PrinterManagerProps> = ({
                       />
                     </div>
                     <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                      <span>Recuperado: {formatMoney(p.accumulatedRecoveryCLP, settings)}</span>
-                      <span>Pendiente: {formatMoney((Math.max(0, p.totalInvestmentCLP - p.accumulatedRecoveryCLP)), settings)}</span>
+                      <span>Recuperado: ${p.accumulatedRecoveryCLP.toLocaleString('es-CL')}</span>
+                      <span>Pendiente: ${(Math.max(0, p.totalInvestmentCLP - p.accumulatedRecoveryCLP)).toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>
@@ -499,7 +496,7 @@ export const PrinterManager: React.FC<PrinterManagerProps> = ({
 
               <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 flex justify-between font-mono">
                 <span>Inversión Total Registrada:</span>
-                <span className="font-bold text-slate-900">{formatMoney((purchasePriceCLP + accessoriesCLP), settings)}</span>
+                <span className="font-bold text-slate-900">${(purchasePriceCLP + accessoriesCLP).toLocaleString('es-CL')} CLP</span>
               </div>
 
               <div className="grid grid-cols-3 gap-3">

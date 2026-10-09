@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, DollarSign, CheckCircle } from 'lucide-react';
 import { Quote, PaymentRecord, BusinessSettings } from '../../types';
-import { currencyCodeOf, formatMoney } from '../../services/currency';
 
 interface PaymentModalProps {
   quote: Quote;
@@ -72,17 +71,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 grid grid-cols-3 gap-2 text-xs text-center font-mono">
           <div>
             <span className="text-[10px] text-slate-400 block font-sans">Total</span>
-            <span className="font-bold text-slate-900">{formatMoney(quote.totalCLP, settings)}</span>
+            <span className="font-bold text-slate-900">${quote.totalCLP.toLocaleString('es-CL')}</span>
           </div>
           <div>
             <span className="text-[10px] text-slate-400 block font-sans">Abonado</span>
             <span className="font-bold text-blue-700">
-              {formatMoney((quote.totalCLP - quote.balanceCLP), settings)}
+              ${(quote.totalCLP - quote.balanceCLP).toLocaleString('es-CL')}
             </span>
           </div>
           <div>
             <span className="text-[10px] text-slate-400 block font-sans">Saldo</span>
-            <span className="font-bold text-emerald-700">{formatMoney(quote.balanceCLP, settings)}</span>
+            <span className="font-bold text-emerald-700">${quote.balanceCLP.toLocaleString('es-CL')}</span>
           </div>
         </div>
 
@@ -102,7 +101,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   paymentType === 'down_payment' ? 'border-slate-900 bg-slate-50 font-bold text-slate-900' : 'border-slate-200 text-slate-600'
                 }`}
               >
-                Anticipo 50% ({formatMoney(quote.downPaymentCLP, settings)})
+                Anticipo 50% (${quote.downPaymentCLP.toLocaleString('es-CL')})
               </button>
 
               <button
@@ -115,14 +114,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   paymentType === 'final_payment' ? 'border-slate-900 bg-slate-50 font-bold text-slate-900' : 'border-slate-200 text-slate-600'
                 }`}
               >
-                Saldo Final ({formatMoney(quote.balanceCLP, settings)})
+                Saldo Final (${quote.balanceCLP.toLocaleString('es-CL')})
               </button>
             </div>
           </div>
 
           <div>
             <label className="block font-semibold text-slate-700 mb-1">
-              Monto a Registrar ({currencyCodeOf(settings)})
+              Monto a Registrar ($ CLP)
             </label>
             <input
               type="number"
@@ -149,7 +148,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <option value="efectivo">Efectivo en Taller</option>
                 <option value="debito">Tarjeta Débito (POS)</option>
                 <option value="credito">Tarjeta Crédito</option>
-                <option value="webpay">Tarjeta / Online</option>
+                <option value="webpay">Webpay / Online</option>
               </select>
             </div>
 

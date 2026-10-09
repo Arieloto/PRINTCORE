@@ -1,10 +1,9 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Check,
   Image
 } from 'lucide-react';
 import { BusinessSettings, ProfitCalculationMode } from '../../types';
-import { currencyCodeOf, CURRENCY_PRESETS, formatMoney, formatRate, regionLabelOf, taxIdLabelOf, taxLabelOf } from '../../services/currency';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 interface BusinessSettingsViewProps {
@@ -72,7 +71,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
             Configuración del Negocio & Motor de Costos
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Define tu taller, sueldo objetivo, horas de producción, costo eléctrico, impuestos y parámetros de margen
+            Define tu taller, sueldo objetivo, horas de producción, costo eléctrico, IVA y parámetros de margen
           </p>
         </div>
 
@@ -107,113 +106,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-
-        {/* 0. Moneda, idioma de números y etiquetas regionales */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h2 className="text-sm font-bold text-slate-900">
-              Moneda y formato regional
-            </h2>
-            <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              {formatMoney(1234567, form)}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Moneda del taller
-              </label>
-              <select
-                value={form.currencyCode}
-                onChange={(e) => {
-                  const preset = CURRENCY_PRESETS.find((item) => item.code === e.target.value);
-                  setForm({
-                    ...form,
-                    currencyCode: e.target.value,
-                    currencyLocale: preset?.locale ?? form.currencyLocale
-                  });
-                }}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
-              >
-                {!CURRENCY_PRESETS.some((preset) => preset.code === form.currencyCode) && (
-                  <option value={form.currencyCode}>{form.currencyCode}</option>
-                )}
-                {CURRENCY_PRESETS.map((preset) => (
-                  <option key={preset.code} value={preset.code}>
-                    {preset.code} — {preset.name}
-                  </option>
-                ))}
-              </select>
-              <span className="text-[10px] text-slate-400">
-                Todos los montos se guardan y calculan en esta moneda
-              </span>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Formato de números y fechas
-              </label>
-              <select
-                value={form.currencyLocale}
-                onChange={(e) => setForm({ ...form, currencyLocale: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
-              >
-                {[form.currencyLocale, ...CURRENCY_PRESETS.map((preset) => preset.locale)]
-                  .filter((locale, index, all) => locale && all.indexOf(locale) === index)
-                  .map((locale) => (
-                    <option key={locale} value={locale}>{locale}</option>
-                  ))}
-              </select>
-              <span className="text-[10px] text-slate-400">
-                Separadores de miles y decimales usados en toda la app
-              </span>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Nombre del impuesto a las ventas
-              </label>
-              <input
-                type="text"
-                value={form.taxLabel ?? ''}
-                onChange={(e) => setForm({ ...form, taxLabel: e.target.value })}
-                placeholder="IVA"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-              <span className="text-[10px] text-slate-400">IVA, VAT, Sales Tax, IGV…</span>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                Identificador tributario de la empresa
-              </label>
-              <input
-                type="text"
-                value={form.taxIdLabel ?? ''}
-                onChange={(e) => setForm({ ...form, taxIdLabel: e.target.value })}
-                placeholder="RUT"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-              <span className="text-[10px] text-slate-400">RUT, RFC, NIT, RUC, Tax ID…</span>
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1">
-                División administrativa
-              </label>
-              <input
-                type="text"
-                value={form.regionLabel ?? ''}
-                onChange={(e) => setForm({ ...form, regionLabel: e.target.value })}
-                placeholder="Comuna"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-              <span className="text-[10px] text-slate-400">Comuna, Estado, Provincia, Región…</span>
-            </div>
-          </div>
-        </div>
-
+        
         {/* 1. Sueldo Objetivo y Hora Hombre */}
         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -221,14 +114,14 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
               1. Objetivo Económico & Tarifa Hora Hombre
             </h2>
             <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              Hora Hombre: {formatRate(calculatedHourlyLaborRate, settings)} / hr
+              Hora Hombre: ${calculatedHourlyLaborRate.toLocaleString('es-CL')} / hr
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
-                Sueldo Mensual Objetivo ({currencyCodeOf(settings)})
+                Sueldo Mensual Objetivo ($ CLP)
               </label>
               <input
                 type="number"
@@ -337,7 +230,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
-                Precio Electricidad ({currencyCodeOf(settings)} / kWh)
+                Precio Electricidad ($ CLP / kWh)
               </label>
               <input
                 type="number"
@@ -345,12 +238,12 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                 onChange={(e) => setForm({ ...form, kwhPriceCLP: parseFloat(e.target.value) || 210 })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
               />
-              <span className="text-[10px] text-slate-400">Revisa el valor por kWh de tu proveedor eléctrico local</span>
+              <span className="text-[10px] text-slate-400">Enel/CGE Chile: ~$190 - $240 / kWh</span>
             </div>
 
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
-                {taxLabelOf(settings)} (%)
+                IVA (Chile)
               </label>
               <input
                 type="number"
@@ -380,7 +273,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
               <label className="block font-medium text-slate-700 mb-1">
-                Gastos Fijos Mensuales ({currencyCodeOf(settings)})
+                Gastos Fijos Mensuales ($ CLP)
               </label>
               <input
                 type="number"
@@ -486,7 +379,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">{taxIdLabelOf(settings)} de la empresa</label>
+              <label className="block font-medium text-slate-700 mb-1">RUT Empresa</label>
               <input
                 type="text"
                 value={form.rut}
@@ -496,7 +389,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">Giro / actividad económica</label>
+              <label className="block font-medium text-slate-700 mb-1">Giro Comercial</label>
               <input
                 type="text"
                 value={form.giro}
@@ -506,7 +399,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">{regionLabelOf(settings)} y ciudad</label>
+              <label className="block font-medium text-slate-700 mb-1">Comuna y Ciudad</label>
               <input
                 type="text"
                 value={form.commune}
@@ -550,7 +443,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                 type="text"
                 value={form.bankName ?? ''}
                 onChange={(e) => setForm({ ...form, bankName: e.target.value })}
-                placeholder="Ej: Banco o entidad financiera"
+                placeholder="Ej: Banco de Chile / Edwards"
                 className="w-full px-3 py-1.5 border border-slate-300 rounded-lg"
               />
             </div>
@@ -589,12 +482,12 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
             </div>
 
             <div>
-              <label className="block font-medium text-slate-700 mb-1">{taxIdLabelOf(settings)} del titular</label>
+              <label className="block font-medium text-slate-700 mb-1">RUT del Titular</label>
               <input
                 type="text"
                 value={form.bankHolderRut ?? ''}
                 onChange={(e) => setForm({ ...form, bankHolderRut: e.target.value })}
-                placeholder={`Deja vacío para usar el ${taxIdLabelOf(settings)} del taller`}
+                placeholder="Deja vacío para usar el RUT del taller"
                 className="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-mono"
               />
             </div>
@@ -664,7 +557,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
         open={blankConfirm}
         variant="warning"
         title="¿Dejar cuadros en blanco?"
-        description="Esto limpiará el nombre del taller, el identificador tributario, dirección y valores para que ingreses tu propia información desde cero."
+        description="Esto limpiará el nombre del taller, RUT, dirección y valores para que ingreses tu propia información desde cero."
         confirmLabel="Limpiar campos"
         onConfirm={handleSetBlank}
         onCancel={() => setBlankConfirm(false)}

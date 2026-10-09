@@ -7,7 +7,6 @@ import {
   CommercialItem,
   DetailedCostItem
 } from '../types';
-import { formatMoney, formatRate } from './currency';
 
 export function calculate3DCost(
   input: CostCalculationInput,
@@ -28,7 +27,7 @@ export function calculate3DCost(
     id: 'labor_rate',
     category: 'Mano de Obra',
     name: 'Tarifa Hora Hombre',
-    formulaDescription: `Valor diario promedio (${formatMoney(dailyAverageRateCLP, settings)} = sueldo mensual ${formatMoney(settings.monthlyTargetSalaryCLP, settings)} / 30 días) · Tarifa hora = sueldo / ${billableHours} hrs productivas consideradas`,
+    formulaDescription: `Valor diario promedio ($${dailyAverageRateCLP.toLocaleString('es-CL')} = sueldo mensual $${settings.monthlyTargetSalaryCLP.toLocaleString('es-CL')} / 30 días) · Tarifa hora = sueldo / ${billableHours} hrs productivas consideradas`,
     quantityUnits: '1 hora',
     unitRateCLP: laborHourlyRateCLP,
     totalCostCLP: laborHourlyRateCLP,
@@ -63,7 +62,7 @@ export function calculate3DCost(
     id: 'material_part',
     category: 'Material',
     name: `Material de pieza (${material.name})`,
-    formulaDescription: `${partWeight} g × ${formatRate(costPerGram, settings)}/g (Bobina ${material.spoolWeightGrams}g a ${formatMoney(material.spoolPriceCLP, settings)})`,
+    formulaDescription: `${partWeight} g × $${costPerGram.toFixed(2)}/g (Bobina ${material.spoolWeightGrams}g a $${material.spoolPriceCLP.toLocaleString('es-CL')})`,
     quantityUnits: `${partWeight} g`,
     unitRateCLP: costPerGram,
     totalCostCLP: materialPartCostCLP,
@@ -75,7 +74,7 @@ export function calculate3DCost(
       id: 'material_supports',
       category: 'Material',
       name: 'Material de soportes',
-      formulaDescription: `${supportWeight} g × ${formatRate(costPerGram, settings)}/g`,
+      formulaDescription: `${supportWeight} g × $${costPerGram.toFixed(2)}/g`,
       quantityUnits: `${supportWeight} g`,
       unitRateCLP: costPerGram,
       totalCostCLP: materialSupportCostCLP,
@@ -88,7 +87,7 @@ export function calculate3DCost(
       id: 'material_purges',
       category: 'Material',
       name: 'Material de purgas y torre multicolor',
-      formulaDescription: `${purgeWeight} g × ${formatRate(costPerGram, settings)}/g (${input.colorCount || 2} colores)`,
+      formulaDescription: `${purgeWeight} g × $${costPerGram.toFixed(2)}/g (${input.colorCount || 2} colores)`,
       quantityUnits: `${purgeWeight} g`,
       unitRateCLP: costPerGram,
       totalCostCLP: materialPurgeCostCLP,
@@ -141,7 +140,7 @@ export function calculate3DCost(
     id: 'machine_recovery',
     category: 'Máquina',
     name: `Depreciación y recuperación (${printer.name})`,
-    formulaDescription: `Inversión ${formatMoney(printer.totalInvestmentCLP, settings)} / ${recoveryMonths} meses / ${monthlyMachineHours} hrs/mes = ${formatRate(Math.round(machineRecoveryPerHourCLP), settings)}/hr × ${printHours} hrs`,
+    formulaDescription: `Inversión $${printer.totalInvestmentCLP.toLocaleString('es-CL')} / ${recoveryMonths} meses / ${monthlyMachineHours} hrs/mes = $${Math.round(machineRecoveryPerHourCLP)}/hr × ${printHours} hrs`,
     quantityUnits: `${printHours} hrs`,
     unitRateCLP: machineRecoveryPerHourCLP,
     totalCostCLP: machineRecoveryCostCLP,
@@ -152,7 +151,7 @@ export function calculate3DCost(
     id: 'machine_electricity',
     category: 'Máquina',
     name: 'Consumo Eléctrico',
-    formulaDescription: `(${printer.averageWatts}W / 1000) × ${printHours} hrs × ${formatRate(kwhRate, settings)}/kWh = ${kwhConsumed.toFixed(2)} kWh`,
+    formulaDescription: `(${printer.averageWatts}W / 1000) × ${printHours} hrs × $${kwhRate}/kWh = ${kwhConsumed.toFixed(2)} kWh`,
     quantityUnits: `${kwhConsumed.toFixed(2)} kWh`,
     unitRateCLP: kwhRate,
     totalCostCLP: electricityCostCLP,
@@ -163,7 +162,7 @@ export function calculate3DCost(
     id: 'machine_maintenance',
     category: 'Máquina',
     name: 'Mantenimiento preventivo de máquina',
-    formulaDescription: `${formatRate(Math.round(maintenancePerHourCLP), settings)}/hr (${(maintenanceAnnualRate * 100).toFixed(0)}% anual) × ${printHours} hrs`,
+    formulaDescription: `$${Math.round(maintenancePerHourCLP)}/hr (${(maintenanceAnnualRate * 100).toFixed(0)}% anual) × ${printHours} hrs`,
     quantityUnits: `${printHours} hrs`,
     unitRateCLP: maintenancePerHourCLP,
     totalCostCLP: maintenanceCostCLP,
@@ -174,7 +173,7 @@ export function calculate3DCost(
     id: 'machine_repair',
     category: 'Máquina',
     name: 'Reserva para repuestos y fallas de hardware',
-    formulaDescription: `${formatRate(repairReservePerHourCLP, settings)}/hr × ${printHours} hrs`,
+    formulaDescription: `$${repairReservePerHourCLP}/hr × ${printHours} hrs`,
     quantityUnits: `${printHours} hrs`,
     unitRateCLP: repairReservePerHourCLP,
     totalCostCLP: repairReserveCostCLP,
@@ -217,7 +216,7 @@ export function calculate3DCost(
       id: 'labor_design',
       category: 'Mano de Obra',
       name: 'Diseño, modelado y optimización CAD 3D',
-      formulaDescription: `${designMinutes} min (${designHours} hrs) × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${designMinutes} min (${designHours} hrs) × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${designMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: designLaborCostCLP,
@@ -230,7 +229,7 @@ export function calculate3DCost(
       id: 'labor_prep',
       category: 'Mano de Obra',
       name: 'Preparación para fabricación y Slicing',
-      formulaDescription: `${prepMinutes} min (${(prepMinutes/60).toFixed(2)} hrs) × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${prepMinutes} min (${(prepMinutes/60).toFixed(2)} hrs) × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${prepMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: preparationLaborCostCLP,
@@ -243,7 +242,7 @@ export function calculate3DCost(
       id: 'labor_post',
       category: 'Mano de Obra',
       name: 'Retiro de soportes y limpieza',
-      formulaDescription: `${postProcMinutes} min × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${postProcMinutes} min × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${postProcMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: postProcessingLaborCostCLP,
@@ -256,7 +255,7 @@ export function calculate3DCost(
       id: 'labor_finishing',
       category: 'Mano de Obra',
       name: 'Acabado, lijado e imprimación',
-      formulaDescription: `${finishingMinutes} min × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${finishingMinutes} min × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${finishingMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: finishingLaborCostCLP,
@@ -269,7 +268,7 @@ export function calculate3DCost(
       id: 'labor_painting',
       category: 'Mano de Obra',
       name: 'Pintura (mano de obra)',
-      formulaDescription: `${paintingMinutes} min × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${paintingMinutes} min × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${paintingMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: paintingLaborCostCLP,
@@ -282,7 +281,7 @@ export function calculate3DCost(
       id: 'labor_assembly',
       category: 'Mano de Obra',
       name: 'Ensamblaje, herrajes e insertos',
-      formulaDescription: `${assemblyMinutes} min × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${assemblyMinutes} min × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${assemblyMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: assemblyLaborCostCLP,
@@ -295,7 +294,7 @@ export function calculate3DCost(
       id: 'labor_qc',
       category: 'Mano de Obra',
       name: 'Control de calidad e inspección',
-      formulaDescription: `${qcMinutes} min × ${formatRate(laborHourlyRateCLP, settings)}/hr`,
+      formulaDescription: `${qcMinutes} min × $${laborHourlyRateCLP.toLocaleString('es-CL')}/hr`,
       quantityUnits: `${qcMinutes} min`,
       unitRateCLP: laborHourlyRateCLP,
       totalCostCLP: qualityControlLaborCostCLP,
@@ -358,7 +357,7 @@ export function calculate3DCost(
     id: 'overhead',
     category: 'Gastos Generales',
     name: 'Asignación de gastos generales de taller',
-    formulaDescription: `Gastos fijos (${formatMoney(settings.monthlyOverheadCLP, settings)}/mes) prorrateados en tiempo productivo`,
+    formulaDescription: `Gastos fijos ($${settings.monthlyOverheadCLP.toLocaleString('es-CL')}/mes) prorrateados en tiempo productivo`,
     quantityUnits: 'Proporcional',
     unitRateCLP: hourlyOverheadCLP,
     totalCostCLP: overheadAllocationCostCLP,
@@ -424,8 +423,8 @@ export function calculate3DCost(
     category: 'Rentabilidad',
     name: `Utilidad comercial (${profitMode === 'markup' ? 'Recargo' : 'Margen'} ${profitPercent}%)`,
     formulaDescription: profitMode === 'markup' 
-      ? `Costo ${formatMoney(totalInternalCostCLP, settings)} × ${profitPercent}%`
-      : `Costo ${formatMoney(totalInternalCostCLP, settings)} / (1 - ${(profitPercent/100).toFixed(2)})`,
+      ? `Costo $${totalInternalCostCLP.toLocaleString('es-CL')} × ${profitPercent}%`
+      : `Costo $${totalInternalCostCLP.toLocaleString('es-CL')} / (1 - ${(profitPercent/100).toFixed(2)})`,
     quantityUnits: `${profitPercent}%`,
     unitRateCLP: totalInternalCostCLP,
     totalCostCLP: totalNetProfitCLP,
@@ -471,7 +470,7 @@ export function calculate3DCost(
       id: 'min_floor_adjustment',
       category: 'Comercial',
       name: 'Ajuste de Tarifa Mínima de Fabricación',
-      formulaDescription: `El valor calculado (${formatMoney((calculatedSubtotalNet - minPriceAdjustmentCLP), settings)}) estaba bajo el costo mínimo del taller (${formatMoney(minFloorCLP, settings)})`,
+      formulaDescription: `El valor calculado ($${(calculatedSubtotalNet - minPriceAdjustmentCLP).toLocaleString('es-CL')}) estaba bajo el costo mínimo del taller ($${minFloorCLP.toLocaleString('es-CL')})`,
       quantityUnits: `${quantity} piezas`,
       unitRateCLP: settings.minManufacturingPriceCLP,
       totalCostCLP: minPriceAdjustmentCLP,
@@ -479,7 +478,7 @@ export function calculate3DCost(
     });
   }
 
-  // 11. Sales tax & final total
+  // 11. Chilean IVA (19%) & Final Total
   const ivaRate = settings.ivaRate ?? 0.19;
   const ivaCLP = Math.round(calculatedSubtotalNet * ivaRate);
   const finalTotalCLP = calculatedSubtotalNet + ivaCLP;

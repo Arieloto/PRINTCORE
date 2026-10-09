@@ -8,19 +8,16 @@ import {
   X, 
   Package
 } from 'lucide-react';
-import { BusinessSettings, Material, MaterialType } from '../../types';
-import { formatMoney } from '../../services/currency';
+import { Material, MaterialType } from '../../types';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 interface InventoryManagerProps {
-  settings: BusinessSettings;
   materials: Material[];
   onSaveMaterials: (materials: Material[]) => void;
 }
 
 export const InventoryManager: React.FC<InventoryManagerProps> = ({
   materials,
-  settings,
   onSaveMaterials
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -282,7 +279,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                       </td>
 
                       <td className="py-3 px-4 text-right font-mono font-medium text-slate-900 tabular-nums">
-                        {formatMoney(mat.spoolPriceCLP, settings)}
+                        ${mat.spoolPriceCLP.toLocaleString('es-CL')}
                         <div className="text-[10px] text-slate-400">{mat.spoolWeightGrams}g</div>
                       </td>
 

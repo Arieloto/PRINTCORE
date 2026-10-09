@@ -42,12 +42,6 @@ export const DEFAULT_SETTINGS: BusinessSettings = {
   email: '',
   website: '',
 
-  currencyCode: 'CLP',
-  currencyLocale: 'es-CL',
-  taxLabel: 'IVA',
-  taxIdLabel: 'RUT',
-  regionLabel: 'Comuna',
-
   monthlyTargetSalaryCLP: 0,
   monthlyAvailableHours: 180,
   monthlyProductiveHours: 140,
@@ -73,13 +67,13 @@ export const DEFAULT_SETTINGS: BusinessSettings = {
   numberPadding: 4,
 
   // Bank account (transfer details shown on quotes and receipts)
-  bankName: '',
-  bankAccountType: '',
-  bankAccountNumber: '',
+  bankName: 'Banco de Chile / Edwards',
+  bankAccountType: 'Cuenta Corriente',
+  bankAccountNumber: '00-192-88401-09',
   bankHolderName: '',
   bankHolderRut: '',
   bankHolderEmail: '',
-  paymentMethodLabel: 'Transferencia bancaria',
+  paymentMethodLabel: 'Transferencia Electrónica',
 
   // Payment receipt numbering (editable, starts at 0)
   receiptCounter: 0,

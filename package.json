@@ -47,7 +47,7 @@
   "build": {
     "appId": "cl.printcore.app",
     "productName": "PrintCore",
-    "copyright": "PrintCore 3D",
+    "copyright": "PrintCore 3D Chile",
     "directories": {
       "output": "release",
       "buildResources": "build"

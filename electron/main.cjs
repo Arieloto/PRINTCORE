@@ -67,7 +67,7 @@ function createWindow() {
     show: false,
     frame: false,
     backgroundColor: '#020617',
-    title: 'PrintCore 3D',
+    title: 'PrintCore 3D Chile',
     icon: path.join(__dirname, '..', 'build', 'icon.ico'),
     autoHideMenuBar: true,
     webPreferences: {

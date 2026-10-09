@@ -1,29 +1,15 @@
-# PrintCore 3D
+# PrintCore 3D Chile
 
-Sistema integral para costeo y gestión de talleres de impresión 3D: costeo, cotizaciones, órdenes de trabajo, inventario, pagos y rentabilidad. Funciona en cualquier país y con cualquier moneda.
+Sistema integral para costeo y gestión de talleres de impresión 3D en Chile: costeo, cotizaciones, órdenes de trabajo, inventario, pagos y rentabilidad.
 
-La aplicación combina React + Vite en el frontend con Express + SQLite en el backend. Los datos se guardan en SQLite y el frontend conserva `localStorage` como respaldo cuando la API no está disponible. El impuesto mostrado en cotizaciones y reportes es solo un cálculo de precios; esta aplicación no emite ni reemplaza documentos tributarios.
+La aplicación combina React + Vite en el frontend con Express + SQLite en el backend. Los datos se guardan en SQLite y el frontend conserva `localStorage` como respaldo cuando la API no está disponible. El IVA mostrado en cotizaciones y reportes es solo un cálculo de precios; esta aplicación no emite ni reemplaza documentos tributarios.
 
 ## Versión 1.1.0
 
 - Se retiraron las vistas y opciones para boletas, facturas y SII/DTE.
 - Se mantienen las cotizaciones, órdenes de trabajo y comprobantes internos de pago.
 - Las órdenes de trabajo generan instrucciones de acabado, pintura y ensamblaje según los procesos cotizados; el taller puede ajustarlas antes de imprimir la hoja A4.
-- El impuesto de las cotizaciones y los indicadores financieros es una estimación de precios; PrintCore no emite documentos tributarios ni los envía a ningún organismo recaudador.
-
-## Multimoneda y uso internacional
-
-PrintCore ya no está limitado a Chile. En **Configuración → Moneda y formato regional** puedes definir:
-
-- **Moneda del taller**: CLP, USD, EUR, MXN, ARS, COP, PEN, UYU, BOB, BRL, GBP o JPY. Todos los montos se guardan y calculan en esa moneda.
-- **Formato de números y fechas**: la locale que define los separadores de miles y decimales en toda la app.
-- **Nombre del impuesto a las ventas**: IVA, VAT, Sales Tax, IGV… y su tasa.
-- **Identificador tributario de la empresa**: RUT, RFC, NIT, RUC, Tax ID…
-- **División administrativa**: Comuna, Estado, Provincia, Región…
-
-Las cotizaciones, órdenes de trabajo, comprobantes y reportes usan esa configuración, así que la misma app sirve para un taller en Santiago, Ciudad de México o Madrid.
-
-> Los datos guardados antes de esta versión se leen en pesos chilenos (CLP), que sigue siendo la configuración inicial. Si cambias la moneda, los montos existentes se interpretan en la nueva moneda: conviene hacerlo antes de cargar datos reales.
+- El IVA de las cotizaciones y los indicadores financieros es una estimación de precios; PrintCore no emite documentos tributarios ni los envía al SII.
 
 ## Requisitos
 
@@ -65,8 +51,6 @@ npm run desktop:dist
 - `PrintCore-1.1.0-portable.exe`: ejecutable portable.
 
 Los instaladores generados actualmente no tienen firma digital; Windows puede mostrar una advertencia de editor desconocido. Para distribuirlos públicamente sin esa advertencia se necesita firmar el ejecutable con un certificado de código.
-
-> **Si el build falla con `EPERM: operation not permitted, rename ... release\win-unpacked.tmp`**: es un bloqueo de Windows sobre los binarios de Electron recién extraídos en la carpeta `release` del Escritorio (indexación o antivirus). La salida es compilar en otra ruta y copiar los artefactos: cambia temporalmente `build.directories.output` en `package.json` a una carpeta fuera del Escritorio (por ejemplo `C:\Temp\pc-build`), ejecuta `npx electron-builder`, copia los `.exe` resultantes a `release/` y vuelve a dejar `output` en `release`.
 
 La versión del nombre se toma de `version` en `package.json`. Para probar la ventana de Electron sin crear los instaladores:
 

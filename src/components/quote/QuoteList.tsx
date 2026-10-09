@@ -10,12 +10,10 @@ import {
   AlertCircle,
   Trash2
 } from 'lucide-react';
-import { BusinessSettings, Quote } from '../../types';
-import { formatDate, formatMoney } from '../../services/currency';
+import { Quote } from '../../types';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
 interface QuoteListProps {
-  settings: BusinessSettings;
   quotes: Quote[];
   onOpenDocument: (quote: Quote, docType: 'cotizacion' | 'orden' | 'pago' | 'auditoria') => void;
   /** Copia los requisitos de esta cotización al costeo inteligente (trabajo similar). */
@@ -31,7 +29,6 @@ interface QuoteListProps {
 
 export const QuoteList: React.FC<QuoteListProps> = ({
   quotes,
-  settings,
   onOpenDocument,
   onCopyRequirementsToWizard,
   onGenerateWorkOrder,
@@ -172,7 +169,7 @@ export const QuoteList: React.FC<QuoteListProps> = ({
                     <td className="py-3 px-4">
                       <div className="font-mono font-bold text-slate-900">{q.quoteNumber}</div>
                       <div className="text-[11px] text-slate-400 mt-0.5">
-                        {formatDate(q.createdAt, settings)}
+                        {new Date(q.createdAt).toLocaleDateString('es-CL')}
                       </div>
                     </td>
 
@@ -228,17 +225,17 @@ export const QuoteList: React.FC<QuoteListProps> = ({
                         </span>
                       )}
                       <div className="text-[10px] text-slate-400 font-mono">
-                        Saldo: {formatMoney(q.balanceCLP, settings)}
+                        Saldo: ${q.balanceCLP.toLocaleString('es-CL')}
                       </div>
                     </td>
 
                     {/* Total Price */}
                     <td className="py-3 px-4 text-right">
                       <div className="font-mono font-bold text-slate-900 tabular-nums">
-                        {formatMoney(q.totalCLP, settings)}
+                        ${q.totalCLP.toLocaleString('es-CL')}
                       </div>
                       <div className="text-[10px] text-slate-400 font-mono">
-                        Neto: {formatMoney(q.subtotalNetCLP, settings)}
+                        Neto: ${q.subtotalNetCLP.toLocaleString('es-CL')}
                       </div>
                     </td>
 

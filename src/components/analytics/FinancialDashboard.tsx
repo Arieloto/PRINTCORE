@@ -9,7 +9,6 @@ import {
   Layers
 } from 'lucide-react';
 import { Quote, Printer, Material, BusinessSettings } from '../../types';
-import { formatMoney, formatRate, taxLabelOf } from '../../services/currency';
 
 interface FinancialDashboardProps {
   quotes: Quote[];
@@ -118,10 +117,10 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <DollarSign className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="mt-2 text-xl font-bold text-slate-900 font-mono tabular-nums">
-            {formatMoney(totalSalesNetCLP, settings)}
+            ${totalSalesNetCLP.toLocaleString('es-CL')}
           </div>
           <div className="mt-1 text-[11px] text-slate-500">
-            {taxLabelOf(settings)} incluido estimado: {formatMoney(totalIVACollectedCLP, settings)}
+            IVA incluido estimado: ${totalIVACollectedCLP.toLocaleString('es-CL')}
           </div>
         </div>
 
@@ -132,7 +131,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <Layers className="w-4 h-4 text-slate-600" />
           </div>
           <div className="mt-2 text-xl font-bold text-slate-900 font-mono tabular-nums">
-            {formatMoney(totalCostsCLP, settings)}
+            ${totalCostsCLP.toLocaleString('es-CL')}
           </div>
           <div className="mt-1 text-[11px] text-slate-500">
             Material, electricidad y depreciación
@@ -146,7 +145,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <TrendingUp className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="mt-2 text-xl font-bold text-emerald-700 font-mono tabular-nums">
-            {formatMoney(totalProfitCLP, settings)}
+            ${totalProfitCLP.toLocaleString('es-CL')}
           </div>
           <div className="mt-1 text-[11px] text-emerald-600 font-medium">
             Margen promedio: {(avgMarginRatio * 100).toFixed(0)}%
@@ -187,14 +186,14 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           </div>
 
           <p className="text-xs text-slate-500">
-            Calculado con tu valor diario promedio de <strong>{formatMoney(Math.round(settings.monthlyTargetSalaryCLP / 30), settings)}/día</strong> (sueldo objetivo {formatMoney(settings.monthlyTargetSalaryCLP, settings)} / 30) y gastos fijos de taller de <strong>{formatMoney(settings.monthlyOverheadCLP, settings)}</strong>:
+            Calculado con tu valor diario promedio de <strong>${Math.round(settings.monthlyTargetSalaryCLP / 30).toLocaleString('es-CL')} CLP/día</strong> (sueldo objetivo ${settings.monthlyTargetSalaryCLP.toLocaleString('es-CL')} CLP / 30) y gastos fijos de taller de <strong>${settings.monthlyOverheadCLP.toLocaleString('es-CL')} CLP</strong>:
           </p>
 
           <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs">
             <div>
               <span className="text-[10px] text-slate-400 uppercase font-semibold block">Ventas Mínimas Necesarias</span>
               <div className="text-base font-bold font-mono text-slate-900 mt-1">
-                {formatMoney(breakEvenRevenueCLP, settings)}
+                ${breakEvenRevenueCLP.toLocaleString('es-CL')} CLP
               </div>
               <div className="text-[10px] text-slate-500 mt-0.5">Ingreso neto mensual mínimo</div>
             </div>
@@ -204,12 +203,12 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               <div className="text-base font-bold font-mono text-slate-900 mt-1">
                 ~{breakEvenOrdersCount} pedidos
               </div>
-              <div className="text-[10px] text-slate-500 mt-0.5">Ticket prom. {formatMoney(Math.round(avgTicketCLP), settings)}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">Ticket prom. ${Math.round(avgTicketCLP).toLocaleString('es-CL')}</div>
             </div>
           </div>
 
           <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-lg text-xs text-emerald-900">
-            Al superar los <strong>{formatMoney(breakEvenRevenueCLP, settings)}</strong> mensuales, todo monto adicional es ganancia neta por sobre tu remuneración objetivo.
+            Al superar los <strong>${breakEvenRevenueCLP.toLocaleString('es-CL')}</strong> mensuales, todo peso adicional es ganancia neta por sobre tu remuneración objetivo.
           </div>
         </div>
 
@@ -231,21 +230,21 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <div className="p-2.5 bg-slate-50 rounded border border-slate-100">
               <span className="text-[10px] text-slate-400 uppercase font-semibold block">Inversión Flota</span>
               <div className="font-bold font-mono text-slate-800 mt-1">
-                {formatMoney(totalFleetInvestmentCLP, settings)}
+                ${totalFleetInvestmentCLP.toLocaleString('es-CL')}
               </div>
             </div>
 
             <div className="p-2.5 bg-slate-50 rounded border border-slate-100">
               <span className="text-[10px] text-slate-400 uppercase font-semibold block">Recuperado</span>
               <div className="font-bold font-mono text-emerald-700 mt-1">
-                {formatMoney(accumulatedRecoveryCLP, settings)}
+                ${accumulatedRecoveryCLP.toLocaleString('es-CL')}
               </div>
             </div>
 
             <div className="p-2.5 bg-slate-50 rounded border border-slate-100">
               <span className="text-[10px] text-slate-400 uppercase font-semibold block">Saldo Pendiente</span>
               <div className="font-bold font-mono text-slate-700 mt-1">
-                {formatMoney(pendingInvestmentCLP, settings)}
+                ${pendingInvestmentCLP.toLocaleString('es-CL')}
               </div>
             </div>
           </div>
@@ -291,7 +290,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   <div className="text-right font-mono">
                     <div className="font-bold text-slate-800">{printerRecoveryPct}% amortizada</div>
                     <div className="text-[10px] text-slate-400">
-                      {formatMoney(p.accumulatedRecoveryCLP, settings)} / {formatMoney(p.totalInvestmentCLP, settings)}
+                      ${p.accumulatedRecoveryCLP.toLocaleString('es-CL')} / ${p.totalInvestmentCLP.toLocaleString('es-CL')}
                     </div>
                   </div>
                 </div>
@@ -307,7 +306,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               Inventario & Huella de Filamento
             </h2>
             <span className="text-xs font-mono font-bold text-slate-800">
-              Valor: {formatMoney(Math.round(totalInventoryValueCLP), settings)}
+              Valor: ${Math.round(totalInventoryValueCLP).toLocaleString('es-CL')} CLP
             </span>
           </div>
 

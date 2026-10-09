@@ -32,8 +32,6 @@ interface NavbarProps {
   activeOrdersCount: number;
   /** Whether data is syncing to the SQLite server or staying local. */
   storageMode: StorageMode;
-  /** Locale from the workshop settings, used to format the clock. */
-  locale?: string;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -42,8 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNewQuoteClick,
   pendingQuotesCount,
   activeOrdersCount,
-  storageMode,
-  locale
+  storageMode
 }) => {
   return (
     <header className="app-navbar bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40 no-print">
@@ -70,6 +67,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div>
                 <span className="text-base font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
                   PrintCore 3D
+                </span>
+                <span className="hidden sm:inline-block ml-2 text-xs text-slate-400 font-normal">
+                  Chile
                 </span>
               </div>
             </button>
@@ -175,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Zone 3: Clock, sync status, Primary Action & Settings */}
           <div className="flex items-center gap-2">
-            <LiveClock className="hidden lg:inline text-[11px] text-slate-400" locale={locale} />
+            <LiveClock className="hidden lg:inline text-[11px] text-slate-400" />
 
             <span
               className={`hidden sm:inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold border ${

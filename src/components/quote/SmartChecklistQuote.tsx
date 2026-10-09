@@ -30,7 +30,6 @@ import {
   UrgencyLevel,
   ProfitCalculationMode 
 } from '../../types';
-import { formatMoney, formatRate, taxLabelOf } from '../../services/currency';
 import { calculate3DCost } from '../../services/costEngine';
 import { parseNatural3DText, Parsed3DIntent } from '../../services/naturalLanguageParser';
 import { AppStorage } from '../../services/storage';
@@ -511,7 +510,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
       id: 'material',
       label: 'Material y Filamento',
       status: currentMaterial ? 'completed' : 'missing',
-      detail: currentMaterial ? `${currentMaterial.name} (${formatRate(currentMaterial.costPerGramCLP, settings)}/g)` : 'Seleccionar material'
+      detail: currentMaterial ? `${currentMaterial.name} ($${currentMaterial.costPerGramCLP}/g)` : 'Seleccionar material'
     });
 
     // 5. Peso de pieza
@@ -580,7 +579,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
       id: 'electricity',
       label: 'Tarifa Eléctrica',
       status: 'auto_calculated',
-      detail: `${formatRate(costCalculationInput.customElectricityKwhCLP ?? settings.kwhPriceCLP, settings)}/kWh cargado desde config`
+      detail: `$${costCalculationInput.customElectricityKwhCLP ?? settings.kwhPriceCLP}/kWh cargado desde config`
     });
 
     // 10. Mano de obra
@@ -589,7 +588,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
       id: 'labor',
       label: 'Mano de Obra Humana',
       status: 'auto_calculated',
-      detail: `${formatMoney(billableLabor, settings)}/h (${calculationResult?.breakdown.totalLaborHours || 0} hrs estimadas)`
+      detail: `$${billableLabor.toLocaleString('es-CL')}/h (${calculationResult?.breakdown.totalLaborHours || 0} hrs estimadas)`
     });
 
     // 11. Gastos & Mantenimiento
@@ -608,10 +607,10 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
       detail: `${calculationResult?.breakdown.profitMode === 'markup' ? 'Recargo' : 'Margen'} ${calculationResult?.breakdown.appliedProfitPercent}%`
     });
 
-    // 13. Sales tax
+    // 13. IVA Chile
     items.push({
       id: 'iva',
-      label: `${taxLabelOf(settings)} (${(settings.ivaRate * 100).toFixed(0)}%)`,
+      label: 'IVA (19% Chile)',
       status: 'auto_calculated',
       detail: 'Calculado sobre valor neto comercial'
     });
@@ -632,7 +631,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
   const handleNaturalTextChange = (text: string) => {
     setNaturalText(text);
     if (text.trim().length > 6) {
-      const parsed = parseNatural3DText(text, settings);
+      const parsed = parseNatural3DText(text);
       setParsedIntent(parsed);
     } else {
       setParsedIntent(null);
@@ -1436,7 +1435,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                               setAdhocPrinterHourlyRate(Math.round(preset.purchasePriceCLP / (preset.estimatedUsefulHours || 4000)));
                             }}
                             className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium transition-colors cursor-pointer"
-                            title={`Cargar datos de ${preset.name} (${preset.averageWatts}W, ${formatMoney(preset.purchasePriceCLP, settings)})`}
+                            title={`Cargar datos de ${preset.name} (${preset.averageWatts}W, $${preset.purchasePriceCLP.toLocaleString('es-CL')} CLP)`}
                           >
                             {preset.model} ({preset.averageWatts}W)
                           </button>
@@ -1899,7 +1898,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                     )}
                   </div>
                   <span className="text-[10px] text-slate-400 block mt-1">
-                    Tarifa: {formatRate(calculationResult?.breakdown.laborHourlyRateCLP ?? 0, settings)}/hr (~{formatRate(Math.round((calculationResult?.breakdown.laborHourlyRateCLP || 0) / 60), settings)}/min)
+                    Tarifa: ${calculationResult?.breakdown.laborHourlyRateCLP.toLocaleString('es-CL')}/hr (~${Math.round((calculationResult?.breakdown.laborHourlyRateCLP || 0) / 60).toLocaleString('es-CL')}/min)
                   </span>
                 </div>
 
@@ -2215,7 +2214,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Material neto ({calculationResult.breakdown.totalMaterialGrams}g)</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.totalMaterialCostCLP, settings)}
+                  ${calculationResult.breakdown.totalMaterialCostCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
@@ -2223,7 +2222,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                 <div className="flex justify-between py-0.5 text-slate-500 pl-2">
                   <span>↳ Purgas multicolor</span>
                   <span className="font-mono tabular-nums">
-                    {formatMoney(calculationResult.breakdown.materialPurgeCostCLP, settings)}
+                    ${calculationResult.breakdown.materialPurgeCostCLP.toLocaleString('es-CL')}
                   </span>
                 </div>
               )}
@@ -2231,28 +2230,28 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Máquina & Amortización ({printHours} hrs)</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.machineRecoveryCostCLP, settings)}
+                  ${calculationResult.breakdown.machineRecoveryCostCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Consumo Eléctrico</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.electricityCostCLP, settings)}
+                  ${calculationResult.breakdown.electricityCostCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Mantenimiento & Repuestos</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney((calculationResult.breakdown.maintenanceCostCLP + calculationResult.breakdown.repairReserveCostCLP), settings)}
+                  ${(calculationResult.breakdown.maintenanceCostCLP + calculationResult.breakdown.repairReserveCostCLP).toLocaleString('es-CL')}
                 </span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Mano de Obra ({calculationResult.breakdown.totalLaborHours} hrs)</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.totalLaborCostCLP, settings)}
+                  ${calculationResult.breakdown.totalLaborCostCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
@@ -2260,7 +2259,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                 <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                   <span>Insumos y Embalaje</span>
                   <span className="font-mono font-medium text-slate-800 tabular-nums">
-                    {formatMoney(calculationResult.breakdown.totalSuppliesCostCLP, settings)}
+                    ${calculationResult.breakdown.totalSuppliesCostCLP.toLocaleString('es-CL')}
                   </span>
                 </div>
               )}
@@ -2268,7 +2267,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="flex justify-between py-1 border-b border-slate-100 text-slate-600">
                 <span>Gastos Generales & Mermas</span>
                 <span className="font-mono font-medium text-slate-800 tabular-nums">
-                  {formatMoney((calculationResult.breakdown.overheadAllocationCostCLP + calculationResult.breakdown.failureRiskCostCLP), settings)}
+                  ${(calculationResult.breakdown.overheadAllocationCostCLP + calculationResult.breakdown.failureRiskCostCLP).toLocaleString('es-CL')}
                 </span>
               </div>
 
@@ -2276,7 +2275,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="pt-2 flex justify-between font-semibold text-slate-900 border-t border-slate-200">
                 <span>Costo Total Interno</span>
                 <span className="font-mono tabular-nums">
-                  {formatMoney(calculationResult.breakdown.totalInternalCostCLP, settings)}
+                  ${calculationResult.breakdown.totalInternalCostCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
@@ -2284,7 +2283,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="flex justify-between text-emerald-700 font-medium">
                 <span>Utilidad Taller ({calculationResult.breakdown.appliedProfitPercent}%)</span>
                 <span className="font-mono tabular-nums">
-                  +{formatMoney(calculationResult.breakdown.totalNetProfitCLP, settings)}
+                  +${calculationResult.breakdown.totalNetProfitCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
@@ -2324,7 +2323,7 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                     )}
                   </div>
                   <span className="font-mono font-semibold text-slate-900 tabular-nums">
-                    {formatMoney(item.totalNetCLP, settings)}
+                    ${item.totalNetCLP.toLocaleString('es-CL')}
                   </span>
                 </div>
               ))}
@@ -2337,27 +2336,27 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
               <div className="flex justify-between text-xs text-slate-600">
                 <span>Subtotal Neto</span>
                 <span className="font-mono font-semibold text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.subtotalNetCLP, settings)}
+                  ${calculationResult.breakdown.subtotalNetCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
               <div className="flex justify-between text-xs text-slate-600">
-                <span>{taxLabelOf(settings)} ({(settings.ivaRate * 100).toFixed(0)}%)</span>
+                <span>IVA (19% Chile)</span>
                 <span className="font-mono font-semibold text-slate-800 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.ivaCLP, settings)}
+                  ${calculationResult.breakdown.ivaCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
               <div className="flex justify-between text-sm font-bold text-slate-950 pt-2 border-t border-slate-200">
                 <span>PRECIO TOTAL (CLP)</span>
                 <span className="font-mono text-base text-emerald-600 tabular-nums">
-                  {formatMoney(calculationResult.breakdown.finalTotalCLP, settings)}
+                  ${calculationResult.breakdown.finalTotalCLP.toLocaleString('es-CL')}
                 </span>
               </div>
 
               {quantity > 1 && (
                 <div className="text-[11px] text-right text-slate-500 font-mono">
-                  {formatMoney(calculationResult.breakdown.unitPriceFinalCLP, settings)} c/u con {taxLabelOf(settings)}
+                  ${calculationResult.breakdown.unitPriceFinalCLP.toLocaleString('es-CL')} c/u con IVA
                 </div>
               )}
 
@@ -2366,13 +2365,13 @@ export const SmartChecklistQuote: React.FC<SmartChecklistQuoteProps> = ({
                 <div className="flex justify-between text-slate-700">
                   <span>Anticipo 50% para inicio:</span>
                   <span className="font-mono font-semibold">
-                    {formatMoney(Math.round(calculationResult.breakdown.finalTotalCLP * 0.5), settings)}
+                    ${Math.round(calculationResult.breakdown.finalTotalCLP * 0.5).toLocaleString('es-CL')}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-500">
                   <span>Saldo 50% contra aviso:</span>
                   <span className="font-mono">
-                    {formatMoney(Math.round(calculationResult.breakdown.finalTotalCLP * 0.5), settings)}
+                    ${Math.round(calculationResult.breakdown.finalTotalCLP * 0.5).toLocaleString('es-CL')}
                   </span>
                 </div>
               </div>
